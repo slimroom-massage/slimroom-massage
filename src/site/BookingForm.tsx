@@ -1,3 +1,4 @@
+import { Icon } from "./Icon";
 import { useState, type FormEvent } from "react";
 import { copy, type Language } from "./content";
 import { buildWhatsAppUrl, localDate } from "./booking";
@@ -81,7 +82,9 @@ export function BookingForm({
       </label>
       <button className="button button-primary" type="submit">
         {t.submit}
-        <span aria-hidden="true">↗</span>
+        <span aria-hidden="true">
+          <Icon name="arrow-up-right" />
+        </span>
       </button>
       <p className="form-note">{t.formNote}</p>
       <p className="privacy-note">{t.privacy}</p>

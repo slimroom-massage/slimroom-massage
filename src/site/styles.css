@@ -146,6 +146,12 @@ textarea:focus-visible {
     transform 0.2s;
   border-radius: 3px;
 }
+.icon {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.125em;
+}
 .button span,
 .text-link span {
   font-size: 19px;
@@ -1033,6 +1039,14 @@ textarea:focus-visible {
 @media (max-width: 850px) {
   :root {
     --header-height: 140px;
+  }
+  .header {
+    position: fixed;
+    inset: 0 0 auto;
+  }
+  #main {
+    /* Reserve the fixed header's height, including its bottom border. */
+    padding-top: calc(var(--header-height) + 1px);
   }
   .container {
     width: calc(100% - 48px);

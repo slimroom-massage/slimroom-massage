@@ -259,7 +259,7 @@ test("Greek language persists and translates metadata, treatments and form", asy
     "Ανάλαφρο σώμα.",
   );
   await expect(page).toHaveTitle(
-    "SlimRoom — Μασάζ και σμίλευση σώματος στην Κύπρο",
+    "Slimroom — Μασάζ και σμίλευση σώματος στην Κύπρο",
   );
   await expect(page.locator('meta[name="description"]')).toHaveAttribute(
     "content",

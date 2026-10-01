@@ -1,3 +1,4 @@
+import { Icon } from "./Icon";
 import { useEffect, useState } from "react";
 import { copy, contact, treatments, type Language } from "./content";
 import { BookingForm } from "./BookingForm";
@@ -109,11 +110,11 @@ export function App() {
       </a>
       <header className="header" id="top">
         <div className="container header-inner">
-          <a className="brand" href="#top" aria-label="SlimRoom">
+          <a className="brand" href="#top" aria-label="Slimroom">
             <img
               className="brand-logo"
               src={logo}
-              alt="SlimRoom"
+              alt="Slimroom"
               width="1298"
               height="1012"
             />
@@ -164,7 +165,9 @@ export function App() {
             </div>
             <a className="header-book" href="#booking">
               {t.book}
-              <span aria-hidden="true">↗</span>
+              <span aria-hidden="true">
+                <Icon name="arrow-up-right" />
+              </span>
             </a>
             <button
               className="menu-button"
@@ -197,11 +200,15 @@ export function App() {
             <div className="hero-actions">
               <a className="button button-primary" href="#booking">
                 {t.bookSession}
-                <span aria-hidden="true">↗</span>
+                <span aria-hidden="true">
+                  <Icon name="arrow-up-right" />
+                </span>
               </a>
               <a className="text-link" href="#treatments">
                 {t.explore}
-                <span aria-hidden="true">→</span>
+                <span aria-hidden="true">
+                  <Icon name="arrow-right" />
+                </span>
               </a>
             </div>
             <div className="hero-stats">
@@ -239,16 +246,20 @@ export function App() {
                 />
               </div>
               <span className="vertical-note" aria-hidden="true">
-                SlimRoom — BODY & SOUL
+                Slimroom — BODY & SOUL
               </span>
             </div>
             <figcaption className="image-caption">
-              <span aria-hidden="true">✳</span>
+              <span aria-hidden="true">
+                <Icon name="asterisk" />
+              </span>
               {t.photoNote}
             </figcaption>
           </figure>
           <a className="scroll-link" href="#about">
-            <span aria-hidden="true">↓</span>
+            <span aria-hidden="true">
+              <Icon name="arrow-down" />
+            </span>
             {t.scroll}
           </a>
         </section>
@@ -321,7 +332,13 @@ export function App() {
                 <article className="treatment-card" key={item.id}>
                   <div className="card-top">
                     <span className="treatment-symbol" aria-hidden="true">
-                      {item.symbol}
+                      {item.symbol === "✳" ? (
+                        <Icon name="asterisk" />
+                      ) : item.symbol === "↗" ? (
+                        <Icon name="arrow-up-right" />
+                      ) : (
+                        item.symbol
+                      )}
                     </span>
                     <div className="card-details">
                       <span className="treatment-duration">
@@ -338,7 +355,9 @@ export function App() {
                     onClick={() => selectService(item.id)}
                   >
                     {t.choose}
-                    <span aria-hidden="true">↗</span>
+                    <span aria-hidden="true">
+                      <Icon name="arrow-up-right" />
+                    </span>
                   </a>
                 </article>
               ))}
@@ -360,7 +379,7 @@ export function App() {
             </h2>
             <p>{t.spaceText}</p>
             <span className="decorative-flower" aria-hidden="true">
-              ✳
+              <Icon name="asterisk" />
             </span>
           </div>
           <img
@@ -399,7 +418,7 @@ export function App() {
                 rel="noopener noreferrer"
               >
                 <span className="contact-icon" aria-hidden="true">
-                  ↗
+                  <Icon name="arrow-up-right" />
                 </span>
                 <span>
                   <small>WhatsApp</small>
@@ -438,11 +457,11 @@ export function App() {
         <div className="container">
           <div className="footer-inner">
             <div className="footer-brand">
-              <a className="brand" href="#top" aria-label="SlimRoom">
+              <a className="brand" href="#top" aria-label="Slimroom">
                 <img
                   className="brand-logo"
                   src={logo}
-                  alt="SlimRoom"
+                  alt="Slimroom"
                   width="1298"
                   height="1012"
                 />
@@ -459,7 +478,9 @@ export function App() {
               ))}
               <a className="footer-book" href="#booking">
                 {t.bookSession}
-                <span aria-hidden="true">↗</span>
+                <span aria-hidden="true">
+                  <Icon name="arrow-up-right" />
+                </span>
               </a>
             </nav>
             <div className="footer-column footer-contact">
@@ -471,7 +492,9 @@ export function App() {
               >
                 <span className="footer-contact-label">WhatsApp</span>
                 {contact.phone}
-                <span aria-hidden="true">↗</span>
+                <span aria-hidden="true">
+                  <Icon name="arrow-up-right" />
+                </span>
               </a>
               <a
                 href={contact.instagram}
@@ -480,18 +503,22 @@ export function App() {
               >
                 <span className="footer-contact-label">Instagram</span>
                 {contact.handle}
-                <span aria-hidden="true">↗</span>
+                <span aria-hidden="true">
+                  <Icon name="arrow-up-right" />
+                </span>
               </a>
               <p className="footer-location">{t.location}</p>
             </div>
           </div>
           <div className="footer-bottom">
             <p>
-              © {new Date().getFullYear()} SlimRoom. {t.rights}
+              © {new Date().getFullYear()} Slimroom. {t.rights}
             </p>
             <a className="text-link" href="#top">
               {t.back}
-              <span aria-hidden="true">↑</span>
+              <span aria-hidden="true">
+                <Icon name="arrow-up" />
+              </span>
             </a>
           </div>
         </div>
