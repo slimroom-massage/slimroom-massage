@@ -1,5 +1,5 @@
-import { Icon } from "./Icon";
-import { useEffect, useState } from "react";
+import { Icon, type IconName } from "./Icon";
+import { Fragment, useEffect, useState } from "react";
 import { copy, contact, treatments, type Language } from "./content";
 import { BookingForm } from "./BookingForm";
 import studio from "../assets/optimized/IMG_0059.jpg";
@@ -9,85 +9,31 @@ import massageTools from "../assets/img-5058.png";
 import journal from "../assets/optimized/IMG_0060.jpg";
 import logo from "../assets/logo.png";
 
+import { languageHref, languages, languageLabels } from "./seo";
+import { useLanguage } from "./useLanguage";
+import { useScrollReveal } from "./useScrollReveal";
+
 const sections = ["about", "treatments", "booking"];
+const treatmentIcons: Record<(typeof treatments)[number]["symbol"], IconName> =
+  {
+    "≈": "waves",
+    "≋": "waves-three",
+    "⌁": "wave",
+    "✳": "asterisk",
+    "◡": "smile",
+    "○": "circle",
+    "◇": "diamond",
+    "✧": "sparkle",
+    "↗": "arrow-up-right",
+  };
 
-function initialLanguage(): Language {
-  try {
-    const saved = localStorage.getItem("language");
-    return saved === "en" || saved === "el" ? saved : "ru";
-  } catch {
-    return "ru";
-  }
-}
+export function App({ initialLanguage }: { initialLanguage?: Language } = {}) {
+  const { language, changeLanguage } = useLanguage(initialLanguage);
+  useScrollReveal();
 
-export function App() {
-  const [language, setLanguage] = useState<Language>(initialLanguage);
   const [menuOpen, setMenuOpen] = useState(false);
   const [service, setService] = useState("");
   const t = copy[language];
-
-  useEffect(() => {
-    const motionPreference = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    );
-    if (!("IntersectionObserver" in window)) return;
-
-    const elements = Array.from(
-      document.querySelectorAll<HTMLElement>(
-        ".portrait-frame, .about-copy, .section-heading, .treatment-card, .space-copy, .space > img, .booking-copy, .booking-form",
-      ),
-    );
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach(({ target, isIntersecting }) => {
-          if (!isIntersecting) return;
-          target.classList.remove("reveal-pending");
-          observer.unobserve(target);
-        });
-      },
-      { threshold: 0.08 },
-    );
-
-    const revealAll = () => {
-      if (!motionPreference.matches) return;
-      observer.disconnect();
-      elements.forEach((element) => element.classList.remove("reveal-pending"));
-    };
-
-    if (!motionPreference.matches) {
-      elements.forEach((element) => {
-        element.classList.add("scroll-reveal", "reveal-pending");
-        observer.observe(element);
-      });
-    }
-    motionPreference.addEventListener("change", revealAll);
-    return () => {
-      observer.disconnect();
-      motionPreference.removeEventListener("change", revealAll);
-      elements.forEach((element) =>
-        element.classList.remove("scroll-reveal", "reveal-pending"),
-      );
-    };
-  }, []);
-
-  useEffect(() => {
-    document.documentElement.lang = language;
-    document.title = t.title;
-    document
-      .querySelector('meta[name="description"]')
-      ?.setAttribute("content", t.description);
-    document
-      .querySelector('meta[property="og:title"]')
-      ?.setAttribute("content", t.title);
-    document
-      .querySelector('meta[property="og:description"]')
-      ?.setAttribute("content", t.description);
-    try {
-      localStorage.setItem("language", language);
-    } catch {
-      /* Storage can be disabled. */
-    }
-  }, [language, t]);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -136,32 +82,22 @@ export function App() {
               role="group"
               aria-label={t.languageLabel}
             >
-              <button
-                lang="ru"
-                aria-label="Русский"
-                aria-pressed={language === "ru"}
-                onClick={() => setLanguage("ru")}
-              >
-                RU
-              </button>
-              <span aria-hidden="true">/</span>
-              <button
-                lang="en"
-                aria-label="English"
-                aria-pressed={language === "en"}
-                onClick={() => setLanguage("en")}
-              >
-                EN
-              </button>
-              <span aria-hidden="true">/</span>
-              <button
-                lang="el"
-                aria-label="Ελληνικά"
-                aria-pressed={language === "el"}
-                onClick={() => setLanguage("el")}
-              >
-                EL
-              </button>
+              {languages.map((next, index) => (
+                <Fragment key={next}>
+                  {index > 0 && <span aria-hidden="true">/</span>}
+                  <a
+                    role="button"
+                    href={languageHref(next)}
+                    hrefLang={next}
+                    lang={next}
+                    aria-label={languageLabels[next]}
+                    aria-pressed={language === next}
+                    onClick={(event) => changeLanguage(event, next)}
+                  >
+                    {next.toUpperCase()}
+                  </a>
+                </Fragment>
+              ))}
             </div>
             <a className="header-book" href="#booking">
               {t.book}
@@ -197,6 +133,10 @@ export function App() {
               {t.hero[2]}
             </h1>
             <p className="hero-intro">{t.intro}</p>
+            <p className="women-only-badge">
+              <span aria-hidden="true">♀</span>
+              {t.womenOnly}
+            </p>
             <div className="hero-actions">
               <a className="button button-primary" href="#booking">
                 {t.bookSession}
@@ -332,13 +272,7 @@ export function App() {
                 <article className="treatment-card" key={item.id}>
                   <div className="card-top">
                     <span className="treatment-symbol" aria-hidden="true">
-                      {item.symbol === "✳" ? (
-                        <Icon name="asterisk" />
-                      ) : item.symbol === "↗" ? (
-                        <Icon name="arrow-up-right" />
-                      ) : (
-                        item.symbol
-                      )}
+                      <Icon name={treatmentIcons[item.symbol]} />
                     </span>
                     <div className="card-details">
                       <span className="treatment-duration">
@@ -411,6 +345,10 @@ export function App() {
               <em>{t.bookingAccent}</em>
             </h2>
             <p>{t.bookingIntro}</p>
+            <p className="women-only-badge">
+              <span aria-hidden="true">♀</span>
+              {t.womenOnly}
+            </p>
             <div className="contact-links">
               <a
                 href={contact.whatsapp}

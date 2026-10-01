@@ -205,6 +205,7 @@ export const copy = {
       "Массаж и коррекция фигуры с заботой о вас. Авторские техники, персональный подход и пространство, где можно уделить время себе.",
     bookSession: "Записаться на массаж",
     explore: "Выбрать процедуру",
+    womenOnly: "Работаю только с женщинами",
     photoNote: "Ваше время. Ваша забота о себе.",
     experience: "лет опыта",
     clients: "клиентов",
@@ -277,9 +278,6 @@ export const copy = {
     massageToolsAlt: "Деревянные инструменты для массажа Slimroom",
     cardAlt: "Визитка студии среди розовых лент",
     journalAlt: "Розовый блокнот с вдохновляющей надписью",
-    title: "Slimroom — массаж и коррекция фигуры на Кипре",
-    description:
-      "Массаж и коррекция фигуры с Алиной на Кипре. Запись через WhatsApp.",
   },
   en: {
     skip: "Skip to content",
@@ -295,6 +293,7 @@ export const copy = {
       "Body therapy with you at its heart. Expert massage techniques, a personal approach and a space to make time for yourself.",
     bookSession: "Book a massage",
     explore: "Explore treatments",
+    womenOnly: "Women only",
     photoNote: "Your time. Your kind of self-care.",
     experience: "years of experience",
     clients: "clients",
@@ -365,9 +364,6 @@ export const copy = {
     massageToolsAlt: "Slimroom wooden massage tools",
     cardAlt: "Studio business card among pink ribbons",
     journalAlt: "Pink notebook with an inspiring message",
-    title: "Slimroom — Body therapy & massage in Cyprus",
-    description:
-      "Personalized massage and body sculpting with Alina in Cyprus. Book through WhatsApp.",
   },
   el: {
     skip: "Μετάβαση στο περιεχόμενο",
@@ -383,6 +379,7 @@ export const copy = {
       "Μασάζ και σμίλευση σώματος με επίκεντρο εσάς. Εξειδικευμένες τεχνικές, προσωπική προσέγγιση και ένας χώρος για να αφιερώσετε χρόνο στον εαυτό σας.",
     bookSession: "Κλείστε ένα μασάζ",
     explore: "Δείτε τις θεραπείες",
+    womenOnly: "Μόνο για γυναίκες",
     photoNote: "Ο χρόνος σας. Η φροντίδα σας.",
     experience: "χρόνια εμπειρίας",
     clients: "πελάτισσες",
@@ -454,8 +451,5 @@ export const copy = {
     massageToolsAlt: "Ξύλινα εργαλεία μασάζ Slimroom",
     cardAlt: "Επαγγελματική κάρτα του στούντιο ανάμεσα σε ροζ κορδέλες",
     journalAlt: "Ροζ σημειωματάριο με ένα εμπνευσμένο μήνυμα",
-    title: "Slimroom — Μασάζ και σμίλευση σώματος στην Κύπρο",
-    description:
-      "Εξατομικευμένο μασάζ και σμίλευση σώματος με την Alina στην Κύπρο. Κλείστε ραντεβού μέσω WhatsApp.",
   },
 } satisfies Record<Language, Record<string, string | string[]>>;

@@ -248,14 +248,14 @@ textarea:focus-visible {
   gap: 5px;
   font-size: 10px;
 }
-.language-switch button {
+.language-switch a {
   background: none;
   border: 0;
   padding: 10px 4px;
   color: var(--muted);
   font-size: 10px;
 }
-.language-switch button[aria-pressed="true"] {
+.language-switch a[aria-pressed="true"] {
   font-weight: 700;
   color: var(--accent);
   text-decoration: underline;
@@ -1575,4 +1575,25 @@ textarea:focus-visible {
     transition: none !important;
     animation: none !important;
   }
+}
+
+.women-only-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  max-width: 100%;
+  margin-top: 18px;
+  padding: 8px 14px;
+  border: 1px solid var(--field-border);
+  border-radius: 999px;
+  background: var(--highlight);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.women-only-badge span {
+  flex-shrink: 0;
+  font-size: 20px;
+  line-height: 1;
 }

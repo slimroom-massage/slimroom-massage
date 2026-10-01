@@ -9,7 +9,7 @@ test("assets load below a repository path, language persists, layout fits", asyn
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("");
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
-    "Лёгкость",
+    "Лёгкость в теле.",
   );
   for (const img of await page.locator("img").all()) {
     if (await img.isVisible()) await img.scrollIntoViewIfNeeded();
@@ -259,20 +259,19 @@ test("Greek language persists and translates metadata, treatments and form", asy
     "Ανάλαφρο σώμα.",
   );
   await expect(page).toHaveTitle(
-    "Slimroom — Μασάζ και σμίλευση σώματος στην Κύπρο",
+    "Μασάζ στο κέντρο της Πάφου, Κάτω Πάφος | Slimroom",
   );
   await expect(page.locator('meta[name="description"]')).toHaveAttribute(
     "content",
-    /Κύπρο/,
+    /Κάτω Πάφο/,
   );
   await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
     "content",
     /Μασάζ/,
   );
-  await expect(page.getByRole("group")).toHaveAttribute(
-    "aria-label",
-    "Γλώσσα ιστοσελίδας",
-  );
+  await expect(
+    page.getByRole("group", { name: "Γλώσσα ιστοσελίδας" }),
+  ).toHaveAttribute("aria-label", "Γλώσσα ιστοσελίδας");
   await expect(page.locator(".treatment-card h3")).toHaveText([
     "Κλασικό μασάζ κατά της κυτταρίτιδας",
     "Συνδυαστικό μασάζ κατά της κυτταρίτιδας",
@@ -295,4 +294,169 @@ test("Greek language persists and translates metadata, treatments and form", asy
     "placeholder",
     "Πώς να σας αποκαλώ;",
   );
+});
+
+test("local SEO stays consistent across languages while indexing remains blocked", async ({
+  page,
+  request,
+}) => {
+  const response = await request.get("");
+  const html = await response.text();
+  expect(html).toContain('id="hero-title"');
+  expect(html).toContain("Като Пафос");
+  expect(html).toContain('id="local-business-schema"');
+  expect(html).not.toContain('<div id="root"></div>');
+  const robots = await request.get("robots.txt");
+  expect(await robots.text()).toBe("User-agent: *\nDisallow: /\n");
+  await page.goto("");
+  for (const language of [
+    {
+      button: "Русский",
+      locale: "ru_RU",
+      location: "Като Пафос",
+      lang: "ru",
+      hero: "Лёгкость в теле.",
+      badge: "Работаю только с женщинами",
+    },
+    {
+      button: "English",
+      locale: "en_GB",
+      location: "Kato Paphos",
+      lang: "en",
+      hero: "A lighter body.",
+      badge: "Women only",
+    },
+    {
+      button: "Ελληνικά",
+      locale: "el_CY",
+      location: "Κάτω Πάφος",
+      lang: "el",
+      hero: "Ανάλαφρο σώμα.",
+      badge: "Μόνο για γυναίκες",
+    },
+  ]) {
+    await page
+      .getByRole("button", { name: language.button, exact: true })
+      .click();
+    await expect(page.getByRole("heading", { level: 1 })).toContainText(
+      language.hero,
+    );
+    await expect(page).toHaveTitle(new RegExp(language.location));
+    await expect(page.locator('meta[property="og:locale"]')).toHaveAttribute(
+      "content",
+      language.locale,
+    );
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+      "content",
+      "noindex, nofollow",
+    );
+    const title = await page.title();
+    await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
+      "content",
+      title,
+    );
+    await expect(page.locator('meta[name="twitter:title"]')).toHaveAttribute(
+      "content",
+      title,
+    );
+    const description = await page
+      .locator('meta[name="description"]')
+      .getAttribute("content");
+    await expect(
+      page.locator('meta[property="og:description"]'),
+    ).toHaveAttribute("content", description!);
+    await expect(
+      page.locator('meta[name="twitter:description"]'),
+    ).toHaveAttribute("content", description!);
+    const schema = JSON.parse(
+      (await page.locator("#local-business-schema").textContent())!,
+    );
+    expect(schema["@graph"][0].address.addressLocality).toBe(
+      "Kato Paphos, Paphos",
+    );
+    expect(schema["@graph"][0].hasOfferCatalog.itemListElement).toHaveLength(9);
+    expect(schema["@graph"][1].inLanguage).toBe(language.lang);
+    expect(schema["@graph"][1].name).toBe(title);
+    await expect(page.locator("#local-business-schema")).toHaveCount(1);
+    await expect(page.locator(".hero-copy .women-only-badge")).toBeVisible();
+    await expect(page.locator(".women-only-badge")).toHaveText([
+      "♀" + language.badge,
+      "♀" + language.badge,
+    ]);
+    await expect(page.locator("#faq")).toHaveCount(0);
+  }
+});
+
+test("production page provides treatments and contact without JavaScript", async ({
+  browser,
+}) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  try {
+    const page = await context.newPage();
+    await page.goto("http://127.0.0.1:4173/alina-lending/");
+    await expect(page.getByRole("heading", { level: 1 })).toContainText(
+      "Лёгкость в теле.",
+    );
+    await expect(page.locator(".treatment-card")).toHaveCount(9);
+    await expect(page.locator(".footer-contact")).toContainText(
+      "+357 95 111 676",
+    );
+    await expect(page.locator(".booking-form")).toBeHidden();
+    await expect(page.locator(".hero-copy .women-only-badge")).toContainText(
+      "Работаю только с женщинами",
+    );
+    await expect
+      .poll(() =>
+        page
+          .locator(".hero-image-frame img")
+          .evaluate(
+            (img: HTMLImageElement) => img.complete && img.naturalWidth > 0,
+          ),
+      )
+      .toBeTruthy();
+  } finally {
+    await context.close();
+  }
+});
+
+test("language URLs serve translated HTML and usable language links without JavaScript", async ({
+  browser,
+}) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  try {
+    const page = await context.newPage();
+    for (const language of [
+      { file: "", lang: "ru", title: "Като Пафос", heading: "Лёгкость" },
+      { file: "en.html", lang: "en", title: "Kato Paphos", heading: "A lighter body." },
+      { file: "el.html", lang: "el", title: "Κάτω Πάφος", heading: "Ανάλαφρο σώμα." },
+    ]) {
+      await page.goto(`http://127.0.0.1:4173/alina-lending/${language.file}`);
+      await expect(page.locator("html")).toHaveAttribute("lang", language.lang);
+      await expect(page).toHaveTitle(new RegExp(language.title));
+      await expect(page.getByRole("heading", { level: 1 })).toContainText(language.heading);
+      await expect(page.locator(".treatment-card")).toHaveCount(9);
+      await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", "noindex, nofollow");
+      await expect(page.locator('meta[property="og:image"]')).toHaveAttribute("content", /IMG_0059.*\.jpg$/);
+      await page.getByRole("button", { name: "English", exact: true }).click();
+      await expect(page).toHaveURL(/en\.html$/);
+      await expect(page.locator("html")).toHaveAttribute("lang", "en");
+    }
+  } finally {
+    await context.close();
+  }
+});
+
+test("switching language preserves the form and browser history restores the language", async ({ page }) => {
+  await page.goto("");
+  await page.locator('[name="name"]').fill("Анна");
+  await page.getByRole("button", { name: "English", exact: true }).click();
+  await expect(page).toHaveURL(/en\.html$/);
+  await page.getByRole("button", { name: "Ελληνικά", exact: true }).click();
+  await expect(page).toHaveURL(/el\.html$/);
+  await page.getByRole("button", { name: "Ελληνικά", exact: true }).click();
+  await page.goBack();
+  await expect(page.locator("html")).toHaveAttribute("lang", "en");
+  await expect(page.locator('[name="name"]')).toHaveValue("Анна");
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("lang", "en");
 });
