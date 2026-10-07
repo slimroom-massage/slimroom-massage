@@ -316,7 +316,7 @@ test("local SEO stays consistent across languages while indexing remains blocked
       location: "Като Пафос",
       lang: "ru",
       hero: "Лёгкость в теле.",
-      badge: "Работаю только с женщинами",
+      badge: "Работаю с женщинами и детьми",
     },
     {
       button: "English",
@@ -324,7 +324,7 @@ test("local SEO stays consistent across languages while indexing remains blocked
       location: "Kato Paphos",
       lang: "en",
       hero: "A lighter body.",
-      badge: "Women only",
+      badge: "I work with women and children",
     },
     {
       button: "Ελληνικά",
@@ -332,7 +332,7 @@ test("local SEO stays consistent across languages while indexing remains blocked
       location: "Κάτω Πάφος",
       lang: "el",
       hero: "Ανάλαφρο σώμα.",
-      badge: "Μόνο για γυναίκες",
+      badge: "Εργάζομαι με γυναίκες και παιδιά",
     },
   ]) {
     await page
@@ -403,7 +403,7 @@ test("production page provides treatments and contact without JavaScript", async
     );
     await expect(page.locator(".booking-form")).toBeHidden();
     await expect(page.locator(".hero-copy .women-only-badge")).toContainText(
-      "Работаю только с женщинами",
+      "Работаю с женщинами и детьми",
     );
     await expect
       .poll(() =>
